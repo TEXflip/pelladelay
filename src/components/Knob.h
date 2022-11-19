@@ -17,7 +17,7 @@ public:
 
 	void paint(Graphics& g) override;
 
-	//double getValue() override;
+	double getValue();
 
 	//void resized() override;
 

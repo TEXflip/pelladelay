@@ -54,9 +54,9 @@ void PelladelayAudioProcessorEditor::paint (Graphics& g)
 
 void PelladelayAudioProcessorEditor::resized()
 {
-    auto leftMargin = getWidth() * 0.02;
-    auto topMargin = getHeight() * 0.02;
-    auto dialSize = getWidth() * 0.25;
+    // auto leftMargin = getWidth() * 0.02;
+    // auto topMargin = getHeight() * 0.02;
+    // auto dialSize = getWidth() * 0.25;
 
 
     slider_dry_wet.setBounds(0, 0, knob_size, knob_size);

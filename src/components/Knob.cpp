@@ -12,6 +12,17 @@ Knob::Knob() : Slider(RotaryVerticalDrag, NoTextBox) {
 
 // }
 
+double Knob::getValue(){
+	double v = Slider::getValue();
+	if (stepped){
+		Range<double> r = getRange();
+		double s = n_ticks/r.getLength();
+		return floor(s*v)/s;
+	}
+	else
+		return v;
+}
+
 float Knob::getKnobCurrAngle() {
 	double value = Slider::valueToProportionOfLength(getValue());
 
@@ -86,6 +97,8 @@ void Knob::paint(Graphics& g)
 	p = p.createPathWithRoundedCorners(4);
 	g.setColour(Colour(0xFF0d0d0d));
 	g.fillPath(p, t);
+	// g.setColour(Colour(0xD0000000));
+	// g.strokePath(p, t);
 	//g.fillEllipse(bb);
 
 	g.setColour(Colour(0xFFFFFFFF));
