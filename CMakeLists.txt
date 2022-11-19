@@ -2,12 +2,13 @@ cmake_minimum_required(VERSION 3.15)
 
 project(AUDIO_PLUGIN_EXAMPLE VERSION 0.0.1)
 
-set(JUCE_DIR $ENV{JUCE_DIR})
-set(ASIO_SDK $ENV{ASIO_SDK})
+if (DEFINED ENV{JUCE_DIR})
+    message(STATUS "JUCE directory: $ENV{JUCE_DIR}")
+    add_subdirectory($ENV{JUCE_DIR} "./JUCEbuild" EXCLUDE_FROM_ALL)
+else()
+    message(STATUS "Error: JUCE_DIR environment variable not defined, please set it with the correct Juce path")
+endif()
 
-message(STATUS "JUCE DIRECTORY: ${JUCE_DIR}")
-
-add_subdirectory(${JUCE_DIR} "./JUCEbuild" EXCLUDE_FROM_ALL)
 
 juce_add_plugin(AudioPluginExample
 # VERSION ...                               # Set this if the plugin version is different to the project version
@@ -28,10 +29,13 @@ PRODUCT_NAME "Audio Plugin Example")        # The name of the final executable, 
 
 juce_generate_juce_header(AudioPluginExample)
 
-if (WIN32)
+if (WIN32 AND DEFINED ENV{ASIO_SDK})
     message(STATUS "USING ASIO: ${ASIO_SDK}")
-    target_include_directories(AudioPluginExample PUBLIC ${ASIO_SDK})
-endif (WIN32)
+    set(USE_ASIO 1)
+    target_include_directories(AudioPluginExample PUBLIC $ENV{ASIO_SDK})
+else()
+    set(USE_ASIO 0)
+endif()
 
 target_sources(AudioPluginExample
 PRIVATE
@@ -45,7 +49,7 @@ PUBLIC
 JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
 JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
 JUCE_VST3_CAN_REPLACE_VST2=0
-JUCE_ASIO=1)
+JUCE_ASIO=${USE_ASIO})
 
 target_link_libraries(AudioPluginExample
 PRIVATE
