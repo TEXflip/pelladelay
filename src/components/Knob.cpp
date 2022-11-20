@@ -3,9 +3,10 @@
 #define KNOB_BB_DIST 15
 #define INN_R 6
 #define TICK_SIZE 2
+#define TWO_SQRT12 1.059463094359295264L // to compute a note Hz: 55 * pow(TWO_SQRT12, floor(x))
 
 Knob::Knob() : Slider(RotaryVerticalDrag, NoTextBox) {
-
+	updateGetValueFunction();
 }
 
 // Knob::~Knob() {
@@ -16,20 +17,42 @@ void Knob::setStepped(int n_ticks){
 	if (n_ticks > 1){
 		this->n_ticks = n_ticks;
 		stepped = true;
+		harmonicStepped = false;
 	}
 	else
 		stepped = false;
+	updateGetValueFunction();
 }
 
-double Knob::getValue(){
-	double x = Slider::getValue();
-	if (stepped){
-		double r = getRange().getLength();
-		double s = getRange().getStart();
-		return (floor(x * (n_ticks / r) * 0.999) * r) / (n_ticks - 1) + s;
-	}
+void Knob::setHarmonicStepped(){
+	stepped = false;
+	harmonicStepped = true;
+	updateGetValueFunction();
+	Slider::setRange(1, 80);
+}
+
+void Knob::updateGetValueFunction() {
+	if (stepped)
+		getValueFP = &Knob::_getValueStepped;
+	else if (harmonicStepped)
+		getValueFP = &Knob::_getValueHarmonicStepped;
 	else
-		return x;
+		getValueFP = (FP_D_V) &Slider::getValue;
+}
+
+double Knob::getValue() {
+	return (this->*getValueFP)();
+}
+
+double Knob::_getValueStepped() {
+	double x = Slider::getValue();
+	double r = getRange().getLength();
+	double s = getRange().getStart();
+	return (floor(x * (n_ticks / r) * 0.999) * r) / (n_ticks - 1) + s;
+}
+
+double Knob::_getValueHarmonicStepped() {
+	return 55 * pow(TWO_SQRT12, floor(Slider::getValue() - 50));
 }
 
 float Knob::getKnobCurrAngle() {
@@ -38,6 +61,8 @@ float Knob::getKnobCurrAngle() {
 	if (stepped) {
 		float step = angle_r / n_ticks;
 		return angle_s + floor(0.999 * angle_r * value / step) * (angle_r / (n_ticks-1));
+	} else if (harmonicStepped){
+		value = (Knob::getValue()-1) / (55 * pow(TWO_SQRT12, floor(getRange().getEnd() - 50)));
 	}
 
 	return angle_r * value + angle_s;

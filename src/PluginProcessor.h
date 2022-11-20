@@ -11,8 +11,6 @@
 #include <JuceHeader.h>
 #include <vector>
 
-#define TWO_SQRT12 1.059463094359295264L // to compute a note Hz: 55 * pow(TWO_SQRT12, floor(x))
-
 using namespace juce;
 
 class PealldelayAudioProcessor  : public AudioProcessor

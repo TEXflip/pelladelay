@@ -25,12 +25,16 @@ PelladelayAudioProcessorEditor::PelladelayAudioProcessorEditor (PealldelayAudioP
     slider_dry_wet.setRange(0, 1);
     slider_dry_wet.addListener(this);
 
-    slider_delay_time.setRange(1, 3000);
-    // slider_delay_time.setStepped(11);
+    // slider_delay_time.setRange(1, 3000);
+    slider_delay_time.setHarmonicStepped();
     slider_delay_time.addListener(this);
 
     slider_feedback.setRange(0, 1.2);
     slider_feedback.addListener(this);
+
+    slider_dry_wet.setValue(audioProcessor.dry_wet_ratio);
+    slider_delay_time.setValue(audioProcessor.delay_length);
+    slider_feedback.setValue(audioProcessor.feedback);
 
     
     container.flexWrap = FlexBox::Wrap::wrap;

@@ -22,11 +22,12 @@ private:
     PealldelayAudioProcessor& audioProcessor;
 
     void sliderValueChanged(Slider* slider) override {
-        if (slider == &slider_dry_wet)
-            audioProcessor.dry_wet_ratio = 1 - slider->getValue();
-        else if (slider == &slider_delay_time) {
+        Knob *knob = (Knob*) slider;
+        if (knob == &slider_dry_wet)
+            audioProcessor.dry_wet_ratio = 1 - knob->getValue();
+        else if (knob == &slider_delay_time) {
             
-            int delay_time = slider->getValue(); // this is in ms
+            int delay_time = knob->getValue(); // this is in ms
             unsigned int delay_length = (unsigned int)(delay_time / 1000. * audioProcessor.getSampleRate());
             unsigned int old_del_len = audioProcessor.delay_length;
             
@@ -39,8 +40,8 @@ private:
             
             audioProcessor.delay_length = delay_length;
         }
-        else if (slider == &slider_feedback)
-            audioProcessor.feedback = slider->getValue();
+        else if (knob == &slider_feedback)
+            audioProcessor.feedback = knob->getValue();
     }
 
     Knob slider_dry_wet;
