@@ -10,7 +10,6 @@ public:
 	const float angle_s = 120 * RAD;
 	float angle_r = 300 * RAD;
 	int n_ticks = 8;
-	bool stepped = false;
 
 	Knob();
 	// ~Knob() override;
@@ -19,9 +18,11 @@ public:
 
 	double getValue();
 
-	//void resized() override;
+	void setStepped(int n_ticks);
 
 private:
+	bool stepped = false;
+
 	const float twoPi = MathConstants<float>::twoPi;
 	const float halfPi = MathConstants<float>::halfPi;
 	const float pi = MathConstants<float>::pi;

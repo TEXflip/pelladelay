@@ -26,6 +26,7 @@ PelladelayAudioProcessorEditor::PelladelayAudioProcessorEditor (PealldelayAudioP
     slider_dry_wet.addListener(this);
 
     slider_delay_time.setRange(1, 3000);
+    // slider_delay_time.setStepped(11);
     slider_delay_time.addListener(this);
 
     slider_feedback.setRange(0, 1.2);

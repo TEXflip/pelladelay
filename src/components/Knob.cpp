@@ -5,30 +5,39 @@
 #define TICK_SIZE 2
 
 Knob::Knob() : Slider(RotaryVerticalDrag, NoTextBox) {
-	
+
 }
 
 // Knob::~Knob() {
 
 // }
 
-double Knob::getValue(){
-	double v = Slider::getValue();
-	if (stepped){
-		Range<double> r = getRange();
-		double s = n_ticks/r.getLength();
-		return floor(s*v)/s;
+void Knob::setStepped(int n_ticks){
+	if (n_ticks > 1){
+		this->n_ticks = n_ticks;
+		stepped = true;
 	}
 	else
-		return v;
+		stepped = false;
+}
+
+double Knob::getValue(){
+	double x = Slider::getValue();
+	if (stepped){
+		double r = getRange().getLength();
+		double s = getRange().getStart();
+		return (floor(x * (n_ticks / r) * 0.999) * r) / (n_ticks - 1) + s;
+	}
+	else
+		return x;
 }
 
 float Knob::getKnobCurrAngle() {
-	double value = Slider::valueToProportionOfLength(getValue());
+	double value = Slider::valueToProportionOfLength(Slider::getValue());
 
 	if (stepped) {
 		float step = angle_r / n_ticks;
-		return angle_s + floor(angle_r * value / step) * step;
+		return angle_s + floor(0.999 * angle_r * value / step) * (angle_r / (n_ticks-1));
 	}
 
 	return angle_r * value + angle_s;
@@ -71,7 +80,8 @@ void Knob::drawTicks(Graphics& g, float r)
 
 	float x;
 	float y;
-	for (float a = angle_s; a <= angle_s + angle_r + RAD; a += angle_r / n_ticks)
+	float step = angle_r / (n_ticks-1);
+	for (float a = angle_s; a < angle_s + angle_r + RAD; a += step)
 	{
 		x = cos(a) * r + bb.x;
 		y = sin(a) * r + bb.y;
